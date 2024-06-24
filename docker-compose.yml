@@ -2,9 +2,11 @@ version: '3.8'
 
 services:
   wordpress:
-    image: wordpress:php8.3-fpm-alpine
+    image: wordpress:latest
     container_name: wordpress_008
     restart: always
+    ports:
+      - "8080:80"
     depends_on:
       - db
     environment:
@@ -16,22 +18,8 @@ services:
     volumes:
       - ./wordpress/html:/var/www/html
       - ./wordpress/uploads.ini:/usr/local/etc/php/conf.d/uploads.ini
-    networks:
-      - wordpress-network
-
-  nginx:
-    image: nginx:latest
-    container_name: nginx_008
-    restart: always
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./wordpress/html:/var/www/html:ro
-    depends_on:
-      - wordpress
+      - ./wordpress/web.conf:/etc/apache2/sites-available/web.conf:ro
+      - ./wordpress/web.conf:/etc/apache2/sites-enabled/web.conf:ro
     networks:
       - wordpress-network
 
